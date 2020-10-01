@@ -132,9 +132,6 @@ namespace StlTools
 
 			payLoad.RemoveRange(0, littleEndianTreshold);
 
-			shape.Facets = new List<Facet>();
-			var facet = new Facet();
-
 			/*
 			 * Каждый треугольник описывается двенадцатью 32-битными числами с плавающей запятой: 3 числа для нормали и по 3 числа на каждую из трёх вершин для координат X/Y/Z.
 			 * После идут 2 байта беззнакового 'short', который называется 'attribute byte count'.
@@ -142,9 +139,49 @@ namespace StlTools
 			   Числа с плавающей запятой представляются в виде числа IEEE с плавающей запятой и считается обратным порядком байтов, 
 			   хотя это не указано в документации.
 			 */
-			foreach (var data in payLoad.ToArray())
+			var payLoadIndex = 0;
+			shape.Facets = new List<Facet>();
+			var payloadData = new List<byte>();
+
+			foreach (var data in payLoad)
 			{
-				
+				payLoadIndex++;
+				payloadData.Add(data);
+
+				// треугольник
+				if (payLoadIndex % 50 != 0) continue;
+
+				shape.Facets.Add(new Facet
+				{
+					Normal = new Normal
+					{
+						X = BitConverter.ToSingle(payloadData.Skip(0).Take(4).ToArray(), 0),
+						Y = BitConverter.ToSingle(payloadData.Skip(4).Take(4).ToArray(), 0),
+						Z = BitConverter.ToSingle(payloadData.Skip(8).Take(4).ToArray(), 0),
+					},
+					Vertices = new List<Vertex>
+					{
+						new Vertex {
+							X = BitConverter.ToSingle(payloadData.Skip(12).Take(4).ToArray()),
+							Y = BitConverter.ToSingle(payloadData.Skip(16).Take(4).ToArray()),
+							Z = BitConverter.ToSingle(payloadData.Skip(20).Take(4).ToArray()),
+						},
+						new Vertex
+						{
+							X =BitConverter.ToSingle(payloadData.Skip(24).Take(4).ToArray()),
+							Y = BitConverter.ToSingle(payloadData.Skip(28).Take(4).ToArray()),
+							Z = BitConverter.ToSingle(payloadData.Skip(32).Take(4).ToArray()),
+						},
+						new Vertex
+						{
+							X = BitConverter.ToSingle(payloadData.Skip(36).Take(4).ToArray()),
+							Y = BitConverter.ToSingle(payloadData.Skip(40).Take(4).ToArray()),
+							Z = BitConverter.ToSingle(payloadData.Skip(44).Take(4).ToArray()),
+						},
+					}
+				});
+
+				payloadData.Clear();
 			}
 
 			return shape;
