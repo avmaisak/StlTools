@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using StlTools.Extensions;
 using StlTools.Interfaces;
+using StlTools.Resources;
 using StlTools.Types;
 
 namespace StlTools
@@ -11,12 +13,14 @@ namespace StlTools
 	/// <summary>
 	/// Читатель STL из файла.
 	/// </summary>
-	public class StlFileReader : IStlReader<Shape>
+	public class StlFileReader : IStlReader<Shape>, IDisposable
 	{
 		/// <summary>
 		/// Модель.
 		/// </summary>
 		private static Shape _shape;
+
+		private FileStream _fileStream;
 
 		public StlFileReader() => _shape = new Shape();
 
@@ -30,11 +34,11 @@ namespace StlTools
 
 			if (!File.Exists(path)) return _shape;
 
-			var objStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+			_fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
 
-			if (!objStream.CanRead) throw new StlToolsException(Resources.StlToolsResources.ErrIO001);
+			if (!_fileStream.CanRead) throw new StlToolsException(StlToolsResources.ErrIO001);
 
-			await using (objStream) return objStream.IsBinary() ? ReadBin(_shape, objStream) : await ReadAsii(_shape, path);
+			await using (_fileStream) return _fileStream.IsBinary() ? await ReadBinary(_shape, path) : await ReadAsii(_shape, path);
 		}
 
 		/// <summary>
@@ -54,6 +58,7 @@ namespace StlTools
 			if (resultArray.Length == 0) return shape;
 
 			shape.Facets = new List<Facet>();
+
 			var facet = new Facet();
 
 			foreach (var resultRow in resultArray)
@@ -63,10 +68,7 @@ namespace StlTools
 				var row = resultRow.Trim();
 				if (row.Contains(".")) row = row.Replace(".", ",");
 
-				if (row.StartsWith(Resources.StlToolsResources.SolidToken))
-				{
-					shape.Name = resultRow.Replace(Resources.StlToolsResources.SolidToken, string.Empty).Trim();
-				}
+				if (row.StartsWith(StlToolsResources.SolidToken)) shape.Name = resultRow.Replace(StlToolsResources.SolidToken, string.Empty).Trim();
 
 				if (row.StartsWith("facet"))
 				{
@@ -80,30 +82,27 @@ namespace StlTools
 					};
 				}
 
-				if (row == "outer loop")
-				{
-					// ReSharper disable once PossibleNullReferenceException
-					facet.Vertices = new List<Vertex>();
-				}
-
+				// ReSharper disable once PossibleNullReferenceException
+				if (row == "outer loop") facet.Vertices = new List<Vertex>();
 
 				if (row.StartsWith("vertex"))
 				{
+					if (!row.Contains(" ")) continue;
+
 					var vertexData = row.Split(' ');
+					// ReSharper disable once PossibleNullReferenceException
 					facet.Vertices.Add(new Vertex
 					{
-						X = Convert.ToDouble(vertexData[1]), 
-						Y = Convert.ToDouble(vertexData[2]), 
+						X = Convert.ToDouble(vertexData[1]),
+						Y = Convert.ToDouble(vertexData[2]),
 						Z = Convert.ToDouble(vertexData[3])
 					});
 				}
 
+				if (!row.StartsWith("endfacet")) continue;
 
-				if (row.StartsWith("endfacet"))
-				{
-					shape.Facets.Add(facet);
-					facet = null;
-				}
+				shape.Facets.Add(facet);
+				facet = null;
 			}
 
 			return shape;
@@ -113,12 +112,40 @@ namespace StlTools
 		/// Читать бинарный.
 		/// </summary>
 		/// <param name="shape"></param>
-		/// <param name="stream"></param>
+		/// <param name="path"></param>
 		/// <returns></returns>
-		private static Shape ReadBin(Shape shape, Stream stream)
+		private static async Task<Shape> ReadBinary(Shape shape, string path)
 		{
-			return _shape;
+			var bytes = await File.ReadAllBytesAsync(path);
+			if (bytes == null || bytes.Length == 0) return shape;
+
+			//  Файл начинается с заголовка из 80 символов
+			const int headerTreshold = 80;
+			// После заголовка идет 4-байтовое беззнаковое целое число (little-endian),
+			const int littleEndianTreshold = headerTreshold + 4;
+
+			shape.Name = bytes.ToList().GetRange(0, headerTreshold).ToArray().ConvertToString().Trim();
+			// После заголовка идет 4-байтовое беззнаковое целое число (little-endian),
+			shape.LittleEndian = BitConverter.ToUInt32(bytes.ToList().GetRange(headerTreshold, littleEndianTreshold).ToArray());
+
+			/*
+			 * Каждый треугольник описывается двенадцатью 32-битными числами с плавающей запятой: 3 числа для нормали и по 3 числа на каждую из трёх вершин для координат X/Y/Z.
+			 * После идут 2 байта беззнакового 'short', который называется 'attribute byte count'.
+			 * В обычном файле должно быть равно нулю, так как большинство программ не понимает других значений.[6]
+			   Числа с плавающей запятой представляются в виде числа IEEE с плавающей запятой и считается обратным порядком байтов, 
+			   хотя это не указано в документации.
+			 */
+			foreach (var data in bytes) {
+				
+			}
+
+			return shape;
 		}
 
+		public void Dispose()
+		{
+			_shape = null;
+			_fileStream.Dispose();
+		}
 	}
 }

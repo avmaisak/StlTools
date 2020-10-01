@@ -40,13 +40,37 @@ namespace StlTools.Testing
 		[TestCase("10ascii")]
 		public void ShapeObjectReadAscii(string e)
 		{
-			var reader = new StlFileReader();
+			using var reader = new StlFileReader();
 			var shape = reader.ReadAndConvertAsync(@"E:\Github\StlTools\data\10ascii.stl").GetAwaiter().GetResult();
 			Assert.IsTrue(shape.Name == e);
 			Assert.IsTrue(shape.Facets != null);
 			Assert.IsTrue(shape.Facets.Count == 12);
 			var firstFacet = shape.Facets.FirstOrDefault();
 			Assert.IsNotNull(firstFacet);
+		}
+
+		[Test]
+		[TestCase("OpenSCAD_Model")]
+		public void ShapeObjectReadAsciiNetWeavingNeedleKit(string e)
+		{
+			using var reader = new StlFileReader();
+			var shape = reader.ReadAndConvertAsync(@"E:\Github\StlTools\data\NetWeavingNeedleKit.stl").GetAwaiter().GetResult();
+			Assert.IsTrue(shape.Name == e);
+			Assert.IsTrue(shape.Facets != null);
+			Assert.IsTrue(shape.Facets.Count == 7876);
+			var firstFacet = shape.Facets.FirstOrDefault();
+			Assert.IsNotNull(firstFacet);
+		}
+
+		[Test]
+		[TestCase("solid 10bin")]
+		public void ShapeObjectReadBin(string e)
+		{
+			using var reader = new StlFileReader();
+			var shape = reader.ReadAndConvertAsync(@"E:\Github\StlTools\data\10bin.stl").GetAwaiter().GetResult();
+			Assert.IsTrue(shape.Name == e);
+			Assert.IsTrue(shape.LittleEndian == 12);
+			Assert.Pass();
 		}
 	}
 }

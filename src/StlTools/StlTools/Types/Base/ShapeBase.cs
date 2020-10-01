@@ -40,7 +40,6 @@ namespace StlTools.Types.Base
 			Header != null &&
 			string.IsNullOrWhiteSpace(Header) &&
 			Header.Contains(StlToolsResources.SolidToken) &&
-			!Header.StartsWith(StlToolsResources.SolidToken) &&
 			LittleEndian > 0 &&
 			Facets != null &&
 			Facets.Count > 0 &&
