@@ -23,11 +23,6 @@ namespace StlTools.Extensions
 			return bFlag;
 		}
 
-		public static string ConvertToString(this byte[] bytes)
-		{
-			using var stream = new MemoryStream(bytes);
-			using var streamReader = new StreamReader(stream);
-			return streamReader.ReadToEnd();
-		}
+		
 	}
 }

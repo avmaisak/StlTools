@@ -128,6 +128,13 @@ namespace StlTools
 			// После заголовка идет 4-байтовое беззнаковое целое число (little-endian),
 			shape.LittleEndian = BitConverter.ToUInt32(bytes.ToList().GetRange(headerTreshold, littleEndianTreshold).ToArray());
 
+			var payLoad = bytes.ToList();
+
+			payLoad.RemoveRange(0, littleEndianTreshold);
+
+			shape.Facets = new List<Facet>();
+			var facet = new Facet();
+
 			/*
 			 * Каждый треугольник описывается двенадцатью 32-битными числами с плавающей запятой: 3 числа для нормали и по 3 числа на каждую из трёх вершин для координат X/Y/Z.
 			 * После идут 2 байта беззнакового 'short', который называется 'attribute byte count'.
@@ -135,7 +142,8 @@ namespace StlTools
 			   Числа с плавающей запятой представляются в виде числа IEEE с плавающей запятой и считается обратным порядком байтов, 
 			   хотя это не указано в документации.
 			 */
-			foreach (var data in bytes) {
+			foreach (var data in payLoad.ToArray())
+			{
 				
 			}
 
