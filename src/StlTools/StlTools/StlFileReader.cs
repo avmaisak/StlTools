@@ -41,7 +41,7 @@ namespace StlTools
 		/// Читать ASCII.
 		/// </summary>
 		/// <param name="shape"></param>
-		/// <param name="stream"></param>
+		/// <param name="path"></param>
 		/// <returns></returns>
 		private static async Task<Shape> ReadAsii(Shape shape, string path)
 		{
