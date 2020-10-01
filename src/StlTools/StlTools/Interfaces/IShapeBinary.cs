@@ -1,4 +1,4 @@
-﻿namespace StlTools
+﻿namespace StlTools.Interfaces
 {
 	/// <summary>
 	/// Поскольку файл ASCII STL может быть очень большим,
@@ -8,7 +8,7 @@
 	/// После заголовка идет 4-байтовое беззнаковое целое число (little-endian), указывающее количество треугольных граней в данном файле.
 	/// После этого идут данные, характеризующие каждый треугольник, в свою очередь.
 	/// </summary>
-	public interface IShapeBinary : IShapeBase
+	public interface IShapeBinary<T> : IShapeBase<T>
 	{
 		/// <summary>
 		/// Заголовок.

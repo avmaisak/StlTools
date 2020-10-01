@@ -1,9 +1,11 @@
-﻿namespace StlTools
+﻿using StlTools.Interfaces;
+
+namespace StlTools.Types
 {
 	/// <summary>
-	///  Имеются координаты.
+	/// Вершина.
 	/// </summary>
-	public interface IHaveCoordinates
+	public class Vertex: IVertex
 	{
 		/// <summary>
 		/// Координата X.

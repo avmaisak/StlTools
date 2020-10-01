@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
 
-namespace StlTools
+namespace StlTools.Interfaces
 {
 	/// <summary>
 	/// Модель. Базовый интерфейс.
 	/// </summary>
-	public interface IShapeBase
+	public interface IShapeBase<T>
 	{
 		/// <summary>
 		/// Файл состоит из произвольного числа граней-треугольников.
 		/// </summary>
-		public ICollection<IFacet> Facets { get; set; }
+		public ICollection<T> Facets { get; set; }
 	}
 }

@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StlTools", "StlTools\StlToo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{A102389B-5389-4846-9F92-5819C978DA8E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StlTools.Testing", "Testing\StlTools.Testing\StlTools.Testing.csproj", "{A65C9D78-AD3A-4F51-A94E-4D69CA204125}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,9 +19,16 @@ Global
 		{B2B437E0-1B34-4D64-B1D6-2F641603CDDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B2B437E0-1B34-4D64-B1D6-2F641603CDDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B2B437E0-1B34-4D64-B1D6-2F641603CDDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A65C9D78-AD3A-4F51-A94E-4D69CA204125}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A65C9D78-AD3A-4F51-A94E-4D69CA204125}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A65C9D78-AD3A-4F51-A94E-4D69CA204125}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A65C9D78-AD3A-4F51-A94E-4D69CA204125}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A65C9D78-AD3A-4F51-A94E-4D69CA204125} = {A102389B-5389-4846-9F92-5819C978DA8E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DAA28BA8-9B11-4745-B3A3-3B1C7708BCCF}

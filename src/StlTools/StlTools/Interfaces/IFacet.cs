@@ -1,20 +1,20 @@
 ﻿using System.Collections.Generic;
 
-namespace StlTools
+namespace StlTools.Interfaces
 {
 	/// <summary>
 	///  Определяет треугольные грани.
 	/// </summary>
-	public interface IFacet
+	public interface IFacet<TNormal,TVerticles> where TNormal : INormal
 	{
 		/// <summary>
 		/// Нормаль.
 		/// </summary>
-		public INormal Normal { get; set; }
+		public TNormal Normal { get; set; }
 
 		/// <summary>
 		/// Вершины.
 		/// </summary>
-		public ICollection<IVertex> Vertices { get; set; }
+		public ICollection<TVerticles> Vertices { get; set; }
 	}
 }

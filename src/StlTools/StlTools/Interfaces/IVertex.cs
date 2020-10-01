@@ -1,4 +1,4 @@
-﻿namespace StlTools
+﻿namespace StlTools.Interfaces
 {
 	/// <summary>
 	/// Вершина.
